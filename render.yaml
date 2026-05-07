@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: levelup-it-resumes
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python seed.py && gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120 --workers 2
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: levelup-it-resumes-db
+          property: connectionString
+      - key: STRIPE_PUBLIC_KEY
+        value: ""
+      - key: STRIPE_SECRET_KEY
+        value: ""
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: FLASK_ENV
+        value: production
+
+databases:
+  - name: levelup-it-resumes-db
+    plan: free
+    databaseName: levelupitresumes
+    user: levelupadmin
